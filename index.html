@@ -76,6 +76,15 @@ color: #c0392b; /* Rouge vif pour le nom */
 font-size: 1.8em;
 margin-top: 10px;
 }
+
+/* Nouveau style pour le post-scriptum */
+#post-scriptum {
+margin-top: 20px;
+font-size: 0.8em;
+color: #7f8c8d; /* Gris doux pour une note discrète */
+max-width: 400px; /* Aligner la largeur avec le conteneur */
+width: 90%;
+}
 /* Fin du CSS */
 </style>
 </head>
@@ -85,12 +94,16 @@ margin-top: 10px;
 <p>Entrez votre code secret à 4 chiffres pour découvrir à qui offrir votre cadeau !</p>
 
 <label for="codeSaisie">Votre code à 4 chiffres :</label>
-<input type="text" id="codeSaisie" maxlength="4" placeholder="Ex: 4891">
+<!-- Changement : Mettre le nouvel exemple d'espace réservé -->
+<input type="text" id="codeSaisie" maxlength="4" placeholder="Ex: 1111">
 
 <button onclick="revelerReceveur()">Révéler !</button>
 
 <div id="resultat"></div>
 </div>
+
+<!-- AJOUT DU POST-SCRIPTUM -->
+<p id="post-scriptum">P.S.: Je (Christophe) ne sais pas à qui vous l'envoyer: la page web et la liste de nom ont été généré par IA.</p>
 
 <script>
 // Début du JavaScript
@@ -159,8 +172,9 @@ if (donneur) {
 const receveur = tirageSecret[donneur];
 
 // 3. Afficher le résultat pour le donneur qui a entré le code
+// Changement : Suppression des astérisques autour du nom du donneur
 resultatDiv.innerHTML = `
-<p>Bravo **${donneur}** !</p>
+<p>Bravo ${donneur} !</p>
 <p>La personne chanceuse à qui vous offrez un cadeau est :</p>
 <div class="receveur">${receveur}</div>
 <p>Chut! C'est un secret ! 😉</p>
