@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tirage au sort d'échange de cadeaux 🎅</title>
+<style>
+/* Début du CSS */
+body {
+font-family: 'Arial', sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+margin: 0;
+background-color: #f4f4f9;
+color: #333;
+text-align: center;
+}
+
+.container {
+background-color: #fff;
+padding: 40px;
+border-radius: 10px;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+max-width: 400px;
+width: 90%;
+}
+
+h1 {
+color: #c0392b; /* Rouge de Noël */
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+margin-bottom: 10px;
+font-weight: bold;
+}
+
+input[type="text"] {
+padding: 10px;
+width: calc(100% - 22px);
+margin-bottom: 20px;
+border: 2px solid #ccc;
+border-radius: 5px;
+font-size: 1.2em;
+text-align: center;
+}
+
+button {
+background-color: #2ecc71; /* Vert de Noël */
+color: white;
+padding: 12px 25px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 1em;
+transition: background-color 0.3s;
+}
+
+button:hover {
+background-color: #27ad60;
+}
+
+#resultat {
+margin-top: 30px;
+font-size: 1.5em;
+font-weight: bold;
+min-height: 30px; /* Pour éviter le saut de mise en page */
+}
+
+.receveur {
+color: #c0392b; /* Rouge vif pour le nom */
+font-size: 1.8em;
+margin-top: 10px;
+}
+/* Fin du CSS */
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Secret Santa Révélé ! 🤫</h1>
+<p>Entrez votre code secret à 4 chiffres pour découvrir à qui offrir votre cadeau !</p>
+
+<label for="codeSaisie">Votre code à 4 chiffres :</label>
+<input type="text" id="codeSaisie" maxlength="4" placeholder="Ex: 4891">
+
+<button onclick="revelerReceveur()">Révéler !</button>
+
+<div id="resultat"></div>
+</div>
+
+<script>
+// Début du JavaScript
+
+// 1. Définition des participants
+const participants = [
+"Martin", "Marie-Noel", "Félix", "Cassiopée", "Julianne", "Christophe",
+"Laurent", "Fabienne", "Mathilde", "Adrien", "Joëlle", "Carl",
+"Brigitte", "Dominique", "Daniel", "Johanne", "Renaud"
+];
+
+// 2. Association des codes à 4 chiffres aux DONNEURS (Celui qui entre le code)
+// **NOUVEAUX CODES**
+const codesDonneurs = {
+"4891": "Martin",
+"1032": "Marie-Noel",
+"7653": "Félix",
+"2984": "Cassiopée",
+"5475": "Julianne",
+"9166": "Christophe",
+"3707": "Laurent",
+"6218": "Fabienne",
+"8549": "Mathilde",
+"1450": "Adrien",
+"9011": "Joëlle",
+"4322": "Carl",
+"7873": "Brigitte",
+"2594": "Dominique",
+"5005": "Daniel",
+"3646": "Johanne",
+"8137": "Renaud"
+};
+
+// 3. Association des DONNEURS aux RECEVEURS (Celle qui recevra le cadeau)
+// **NOUVEAU TIRAGE SECRET** - Caché pour préserver la surprise !
+const tirageSecret = {
+"Martin": "Félix",
+"Marie-Noel": "Laurent",
+"Félix": "Renaud",
+"Cassiopée": "Brigitte",
+"Julianne": "Adrien",
+"Christophe": "Johanne",
+"Laurent": "Joëlle",
+"Fabienne": "Julianne",
+"Mathilde": "Dominique",
+"Adrien": "Christophe",
+"Joëlle": "Carl",
+"Carl": "Fabienne",
+"Brigitte": "Marie-Noel",
+"Dominique": "Daniel",
+"Daniel": "Martin",
+"Johanne": "Cassiopée",
+"Renaud": "Mathilde"
+};
+
+function revelerReceveur() {
+const code = document.getElementById('codeSaisie').value.trim();
+const resultatDiv = document.getElementById('resultat');
+resultatDiv.innerHTML = ""; // Réinitialiser le message
+
+// 1. Vérifier si le code existe dans nos associations
+const donneur = codesDonneurs[code];
+
+if (donneur) {
+// 2. Si le code est valide, trouver le receveur
+const receveur = tirageSecret[donneur];
+
+// 3. Afficher le résultat pour le donneur qui a entré le code
+resultatDiv.innerHTML = `
+<p>Bravo **${donneur}** !</p>
+<p>La personne chanceuse à qui vous offrez un cadeau est :</p>
+<div class="receveur">${receveur}</div>
+<p>Chut! C'est un secret ! 😉</p>
+`;
+} else {
+// 4. Message d'erreur si le code est invalide
+resultatDiv.innerHTML = `<p style="color: red;">Désolé, ce code n'est pas valide. Veuillez réessayer.</p>`;
+}
+}
+// Fin du JavaScript
+</script>
+</body>
+</html>
