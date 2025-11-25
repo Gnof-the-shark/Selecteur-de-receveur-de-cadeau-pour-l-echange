@@ -85,6 +85,24 @@ color: #7f8c8d; /* Gris doux pour une note discrète */
 max-width: 400px; /* Aligner la largeur avec le conteneur */
 width: 90%;
 }
+
+/* Style pour le bouton d'envoi d'e-mail */
+.email-button {
+    display: inline-block;
+    background-color: #3498db; /* Bleu pour l'action d'email */
+    color: white !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.email-button:hover {
+    background-color: #2980b9;
+}
 /* Fin du CSS */
 </style>
 </head>
@@ -94,7 +112,7 @@ width: 90%;
 <p>Entrez votre code secret à 4 chiffres pour découvrir à qui offrir votre cadeau !</p>
 
 <label for="codeSaisie">Votre code à 4 chiffres :</label>
-<!-- Changement : Mettre le nouvel exemple d'espace réservé -->
+<!-- Espace réservé (placeholder) mis à jour pour plus de clarté -->
 <input type="text" id="codeSaisie" maxlength="4" placeholder="Ex: 1111">
 
 <button onclick="revelerReceveur()">Révéler !</button>
@@ -116,7 +134,6 @@ const participants = [
 ];
 
 // 2. Association des codes à 4 chiffres aux DONNEURS (Celui qui entre le code)
-// **NOUVEAUX CODES**
 const codesDonneurs = {
 "4891": "Martin",
 "1032": "Marie-Noel",
@@ -138,7 +155,6 @@ const codesDonneurs = {
 };
 
 // 3. Association des DONNEURS aux RECEVEURS (Celle qui recevra le cadeau)
-// **NOUVEAU TIRAGE SECRET** - Caché pour préserver la surprise !
 const tirageSecret = {
 "Martin": "Félix",
 "Marie-Noel": "Laurent",
@@ -159,6 +175,28 @@ const tirageSecret = {
 "Renaud": "Mathilde"
 };
 
+// 4. Association des DONNEURS à leurs adresses e-mail pour la fonction "M'envoyer par Courriel"
+const emailsDonneurs = {
+    "Martin": "martinwhite@live.ca",
+    "Marie-Noel": "marie_noel_auger@hotmail.com",
+    "Félix": "felixwhite696@gmail.com",
+    "Cassiopée": "cassiop2005@gmail.com",
+    "Julianne": "julianne.white@outlook.com",
+    "Christophe": "christophwhite14@gmail.com",
+    "Laurent": "monsieurwhite@hotmail.com",
+    "Fabienne": "hardyfabienne@hotmail.com",
+    "Mathilde": "mathildewhite39@gmail.com",
+    "Adrien": "adrienhwhite@gmail.com",
+    "Joëlle": "white-jo@hotmail.com",
+    "Carl": "lefrancoiscarl@gmail.com",
+    "Brigitte": "brigitte.white@monithq.ca",
+    "Dominique": "mdominiquewhite@gmail.com",
+    "Daniel": "dan7white@yahoo.ca",
+    "Johanne": "johannerigali@hotmail.com",
+    "Renaud": "renaudwhite@gmail.com"
+};
+
+
 function revelerReceveur() {
 const code = document.getElementById('codeSaisie').value.trim();
 const resultatDiv = document.getElementById('resultat');
@@ -168,16 +206,33 @@ resultatDiv.innerHTML = ""; // Réinitialiser le message
 const donneur = codesDonneurs[code];
 
 if (donneur) {
-// 2. Si le code est valide, trouver le receveur
+// 2. Si le code est valide, trouver le receveur et l'e-mail du donneur
 const receveur = tirageSecret[donneur];
+const donneurEmail = emailsDonneurs[donneur]; // Récupérer l'e-mail du donneur
+
+// --- Construction du lien mailto: pour l'envoi du nom ---
+const emailSubject = encodeURIComponent("Mon Receveur Secret pour l'Échange de Cadeaux ! 🎁");
+const emailBody = encodeURIComponent(
+    `Bonjour ${donneur},\n\n` +
+    `Le tirage au sort est complet !\n` +
+    `La personne chanceuse à qui tu offres un cadeau est : ${receveur}.\n\n` +
+    `Garde bien le secret ! Tu peux t'envoyer cet e-mail à toi-même pour te le rappeler.\n\n` +
+    `Joyeuses Fêtes !`
+);
+// Le lien inclut l'adresse du donneur dans le champ 'À' (to)
+const mailtoLink = `mailto:${donneurEmail}?subject=${emailSubject}&body=${emailBody}`;
+// --- Fin Construction du lien mailto: ---
+
 
 // 3. Afficher le résultat pour le donneur qui a entré le code
-// Changement : Suppression des astérisques autour du nom du donneur
 resultatDiv.innerHTML = `
 <p>Bravo ${donneur} !</p>
 <p>La personne chanceuse à qui vous offrez un cadeau est :</p>
 <div class="receveur">${receveur}</div>
 <p>Chut! C'est un secret ! 😉</p>
+<a href="${mailtoLink}" class="email-button" title="Cliquer pour ouvrir votre logiciel de messagerie (Outlook, Gmail, etc.) avec votre adresse préremplie.">
+    M'envoyer le nom par Courriel
+</a>
 `;
 } else {
 // 4. Message d'erreur si le code est invalide
