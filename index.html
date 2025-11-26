@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tirage au sort d'échange de cadeaux 🎅</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
 /* Début du CSS */
 body {
-font-family: 'Arial', sans-serif;
+font-family: 'Inter', sans-serif; /* Utilisation de la police Inter par défaut pour une meilleure lisibilité */
 display: flex;
 flex-direction: column;
 align-items: center;
@@ -23,14 +24,20 @@ text-align: center;
 background-color: #fff;
 padding: 40px;
 border-radius: 10px;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée pour la profondeur */
 max-width: 400px;
 width: 90%;
+margin-bottom: 20px;
 }
 
 h1 {
 color: #c0392b; /* Rouge de Noël */
 margin-bottom: 20px;
+font-weight: 700;
+}
+
+p {
+margin-bottom: 15px;
 }
 
 label {
@@ -47,9 +54,15 @@ border: 2px solid #ccc;
 border-radius: 5px;
 font-size: 1.2em;
 text-align: center;
+transition: border-color 0.3s;
 }
 
-button {
+input[type="text"]:focus {
+border-color: #c0392b; /* Rouge de Noël au focus */
+outline: none;
+}
+
+.main-button {
 background-color: #2ecc71; /* Vert de Noël */
 color: white;
 padding: 12px 25px;
@@ -57,12 +70,60 @@ border: none;
 border-radius: 5px;
 cursor: pointer;
 font-size: 1em;
-transition: background-color 0.3s;
+font-weight: bold;
+transition: background-color 0.3s, transform 0.1s;
+box-shadow: 0 4px #1e8449; /* Ombre pour un effet 3D */
+margin-bottom: 10px;
 }
 
-button:hover {
+.main-button:hover {
 background-color: #27ad60;
 }
+
+.main-button:active {
+transform: translateY(2px);
+box-shadow: 0 2px #1e8449; /* Affaiblir l'ombre au clic */
+}
+
+/* Style pour le bouton d'envoi d'e-mail (MAINTENANT VERT) */
+.email-button {
+    display: inline-block;
+    background-color: #2ecc71; 
+    color: white !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px #1e8449;
+}
+
+.email-button:hover {
+    background-color: #27ad60;
+}
+
+.email-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px #1e8449;
+}
+
+/* Nouveau style pour le bouton Gemini (pour le différencier un peu) */
+.gemini-button {
+    background-color: #e67e22; /* Orange pour l'action LLM */
+    box-shadow: 0 4px #d35400;
+}
+
+.gemini-button:hover {
+    background-color: #d35400;
+}
+
+.gemini-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px #d35400;
+}
+
 
 #resultat {
 margin-top: 30px;
@@ -75,7 +136,44 @@ min-height: 30px; /* Pour éviter le saut de mise en page */
 color: #c0392b; /* Rouge vif pour le nom */
 font-size: 1.8em;
 margin-top: 10px;
+padding: 5px;
+background-color: #fcebeb; /* Fond léger pour le nom révélé */
+border-radius: 5px;
 }
+
+/* Zone de résultat des idées cadeaux */
+#ideeCadeauResultat {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.9em;
+    border: 1px dashed #c0392b;
+}
+
+#ideeCadeauResultat p {
+    margin-bottom: 5px;
+}
+
+/* Indicateur de chargement simple */
+.loading {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #c0392b;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 /* Nouveau style pour le post-scriptum */
 #post-scriptum {
@@ -86,47 +184,73 @@ max-width: 400px; /* Aligner la largeur avec le conteneur */
 width: 90%;
 }
 
-/* Style pour le bouton d'envoi d'e-mail */
-.email-button {
-    display: inline-block;
-    background-color: #3498db; /* Bleu pour l'action d'email */
-    color: white !important;
-    text-decoration: none;
-    padding: 10px 20px;
-    margin-top: 20px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.email-button:hover {
-    background-color: #2980b9;
+/* Nouvelle règle CSS: enlever l'anneau de focus par défaut sur les éléments interactifs (pour l'esthétique) */
+button:focus, .email-button:focus {
+    outline: none;
 }
 /* Fin du CSS */
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Sélecteur de receveur de cadeau</h1>
+<h1>Sélecteur de receveur de cadeau 🎁</h1>
 <p>Entrez votre code secret à 4 chiffres pour découvrir à qui offrir votre cadeau !</p>
 
 <label for="codeSaisie">Votre code à 4 chiffres :</label>
-<!-- Espace réservé (placeholder) mis à jour pour plus de clarté -->
 <input type="text" id="codeSaisie" maxlength="4" placeholder="Ex: 1111">
 
-<button onclick="revelerReceveur()">Révéler !</button>
+<button onclick="revelerReceveur()" class="main-button">Révéler !</button>
 
 <div id="resultat"></div>
+<div id="ideeCadeauResultat"></div>
+
 </div>
 
-<!-- AJOUT DU POST-SCRIPTUM -->
+<!-- POST-SCRIPTUM -->
 <p id="post-scriptum">P.S.: Je (Christophe) ne sais pas à qui vous l'envoyer: la page web et la liste de nom ont été généré par IA.</p>
 
 <script>
 // Début du JavaScript
 
-// 1. Définition des participants
+// --- Configuration et Utilitaires Gemini API ---
+const MODEL_NAME = 'gemini-2.5-flash-preview-09-2025';
+const apiKey = "";
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+
+let receveurActuel = null; // Variable globale pour stocker le receveur après la révélation
+
+/**
+ * Fonction utilitaire pour effectuer un fetch avec une nouvelle tentative exponentielle.
+ * @param {string} url L'URL de l'API.
+ * @param {object} options Les options de l'appel fetch.
+ * @param {number} maxRetries Nombre maximal de tentatives.
+ * @returns {Promise<Response>} La réponse de l'API.
+ */
+async function fetchWithExponentialBackoff(url, options, maxRetries = 5) {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const response = await fetch(url, options);
+            if (response.status !== 429 && response.ok) {
+                return response;
+            }
+            if (response.status === 429 && i < maxRetries - 1) {
+                // Si 429 (Too Many Requests), attendre et réessayer
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+                throw new Error(`API response error: ${response.statusText}`);
+            }
+        } catch (error) {
+            if (i === maxRetries - 1) throw error;
+            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+
+// --- Données du Tirage ---
+
+// 1. Définition des participants (non utilisé directement dans le tirage, mais bonne pratique)
 const participants = [
 "Martin", "Marie-Noel", "Félix", "Cassiopée", "Julianne", "Christophe",
 "Laurent", "Fabienne", "Mathilde", "Adrien", "Joëlle", "Carl",
@@ -155,89 +279,147 @@ const codesDonneurs = {
 };
 
 // 3. Association des DONNEURS aux RECEVEURS (Celle qui recevra le cadeau)
+// MISE À JOUR : Les assignations ont été modifiées pour un nouveau tirage secret.
 const tirageSecret = {
-"Martin": "Félix",
-"Marie-Noel": "Laurent",
-"Félix": "Renaud",
-"Cassiopée": "Brigitte",
-"Julianne": "Adrien",
-"Christophe": "Johanne",
-"Laurent": "Joëlle",
-"Fabienne": "Julianne",
-"Mathilde": "Dominique",
-"Adrien": "Christophe",
-"Joëlle": "Carl",
-"Carl": "Fabienne",
-"Brigitte": "Marie-Noel",
-"Dominique": "Daniel",
+"Martin": "Cassiopée",
+"Marie-Noel": "Julianne",
+"Félix": "Christophe",
+"Cassiopée": "Laurent",
+"Julianne": "Fabienne",
+"Christophe": "Mathilde",
+"Laurent": "Adrien",
+"Fabienne": "Joëlle",
+"Mathilde": "Carl",
+"Adrien": "Brigitte",
+"Joëlle": "Dominique",
+"Carl": "Daniel",
+"Brigitte": "Johanne",
+"Dominique": "Renaud",
 "Daniel": "Martin",
-"Johanne": "Cassiopée",
-"Renaud": "Mathilde"
+"Johanne": "Marie-Noel",
+"Renaud": "Félix"
 };
 
 // 4. Association des DONNEURS à leurs adresses e-mail pour la fonction "M'envoyer par Courriel"
 const emailsDonneurs = {
-    "Martin": "martinwhite@live.ca",
-    "Marie-Noel": "marie_noel_auger@hotmail.com",
-    "Félix": "felixwhite696@gmail.com",
-    "Cassiopée": "cassiop2005@gmail.com",
-    "Julianne": "julianne.white@outlook.com",
-    "Christophe": "christophwhite14@gmail.com",
-    "Laurent": "monsieurwhite@hotmail.com",
-    "Fabienne": "hardyfabienne@hotmail.com",
-    "Mathilde": "mathildewhite39@gmail.com",
-    "Adrien": "adrienhwhite@gmail.com",
-    "Joëlle": "white-jo@hotmail.com",
-    "Carl": "lefrancoiscarl@gmail.com",
-    "Brigitte": "brigitte.white@monithq.ca",
-    "Dominique": "mdominiquewhite@gmail.com",
-    "Daniel": "dan7white@yahoo.ca",
-    "Johanne": "johannerigali@hotmail.com",
-    "Renaud": "renaudwhite@gmail.com"
+    "Martin": "martinwhite@live.ca",
+    "Marie-Noel": "marie_noel_auger@hotmail.com",
+    "Félix": "felixwhite696@gmail.com",
+    "Cassiopée": "cassiop2005@gmail.com",
+    "Julianne": "julianne.white@outlook.com",
+    "Christophe": "christophwhite14@gmail.com",
+    "Laurent": "monsieurwhite@hotmail.com",
+    "Fabienne": "hardyfabienne@hotmail.com",
+    "Mathilde": "mathildewhite39@gmail.com",
+    "Adrien": "adrienhwhite@gmail.com",
+    "Joëlle": "white-jo@hotmail.com",
+    "Carl": "lefrancoiscarl@gmail.com",
+    "Brigitte": "brigitte.white@monithq.ca",
+    "Dominique": "mdominiquewhite@gmail.com",
+    "Daniel": "dan7white@yahoo.ca",
+    "Johanne": "johannerigali@hotmail.com",
+    "Renaud": "renaudwhite@gmail.com"
 };
 
+// --- Fonctions Principales de l'Application ---
 
 function revelerReceveur() {
-const code = document.getElementById('codeSaisie').value.trim();
-const resultatDiv = document.getElementById('resultat');
-resultatDiv.innerHTML = ""; // Réinitialiser le message
+    const codeInput = document.getElementById('codeSaisie');
+    const code = codeInput.value.trim();
+    const resultatDiv = document.getElementById('resultat');
+    const ideeCadeauDiv = document.getElementById('ideeCadeauResultat');
+    resultatDiv.innerHTML = ""; // Réinitialiser le message de révélation
+    ideeCadeauDiv.innerHTML = ""; // Réinitialiser les idées cadeaux
+    receveurActuel = null; // Réinitialiser le receveur global
 
-// 1. Vérifier si le code existe dans nos associations
-const donneur = codesDonneurs[code];
+    // 1. Vérifier si le code existe dans nos associations
+    const donneur = codesDonneurs[code];
 
-if (donneur) {
-// 2. Si le code est valide, trouver le receveur et l'e-mail du donneur
-const receveur = tirageSecret[donneur];
-const donneurEmail = emailsDonneurs[donneur]; // Récupérer l'e-mail du donneur
+    if (donneur) {
+        // 2. Si le code est valide, trouver le receveur et l'e-mail du donneur
+        const receveur = tirageSecret[donneur];
+        const donneurEmail = emailsDonneurs[donneur];
+        receveurActuel = receveur; // Stocker le nom pour l'API Gemini
 
-// --- Construction du lien mailto: pour l'envoi du nom ---
-const emailSubject = encodeURIComponent("Mon Receveur Secret pour l'Échange de Cadeaux ! 🎁");
-const emailBody = encodeURIComponent(
-    `Bonjour ${donneur},\n\n` +
-    `Le tirage au sort est complet !\n` +
-    `La personne chanceuse à qui tu offres un cadeau est : ${receveur}.\n\n` +
-    `Garde bien le secret ! Tu peux t'envoyer cet e-mail à toi-même pour te le rappeler.\n\n` +
-    `Joyeuses Fêtes !`
-);
-// Le lien inclut l'adresse du donneur dans le champ 'À' (to)
-const mailtoLink = `mailto:${donneurEmail}?subject=${emailSubject}&body=${emailBody}`;
-// --- Fin Construction du lien mailto: ---
+        // --- AMÉLIORATION DE L'UX: Vider le champ de saisie après un tirage réussi ---
+        codeInput.value = '';
 
+        // --- Construction du lien mailto: pour l'envoi du nom ---
+        const emailSubject = encodeURIComponent("Mon Receveur Secret pour l'Échange de Cadeaux ! 🎁");
+        const emailBody = encodeURIComponent(
+            `Bonjour ${donneur},\n\n` +
+            `Le tirage au sort est complet !\n` +
+            `La personne chanceuse à qui tu offres un cadeau est : ${receveur}.\n\n` +
+            `Garde bien le secret ! Tu peux t'envoyer cet e-mail à toi-même pour te le rappeler.\n\n` +
+            `Joyeuses Fêtes !`
+        );
+        const mailtoLink = `mailto:${donneurEmail}?subject=${emailSubject}&body=${emailBody}`;
+        // --- Fin Construction du lien mailto: ---
 
-// 3. Afficher le résultat pour le donneur qui a entré le code
-resultatDiv.innerHTML = `
-<p>Bravo ${donneur} !</p>
-<p>La personne chanceuse à qui vous offrez un cadeau est :</p>
-<div class="receveur">${receveur}</div>
-<p>Chut! C'est un secret ! 😉</p>
-<a href="${mailtoLink}" class="email-button" title="Cliquer pour ouvrir votre logiciel de messagerie (Outlook, Gmail, etc.) avec votre adresse préremplie.">
-    M'envoyer le nom par Courriel
-</a>
-`;
-} else {
-// 4. Message d'erreur si le code est invalide
-resultatDiv.innerHTML = `<p style="color: red;">Désolé, ce code n'est pas valide. Veuillez réessayer.</p>`;
+        // 3. Afficher le résultat pour le donneur qui a entré le code
+        resultatDiv.innerHTML = `
+            <p>Bravo ${donneur} !</p>
+            <p>La personne chanceuse à qui vous offrez un cadeau est :</p>
+            <div class="receveur">${receveur}</div>
+            <p>Chut! C'est un secret ! 😉</p>
+            <button onclick="genererIdeeCadeau()" class="main-button gemini-button">
+                Idées Cadeaux Magiques ✨
+            </button>
+            <a href="${mailtoLink}" class="email-button" title="Cliquer pour ouvrir votre logiciel de messagerie (Outlook, Gmail, etc.) avec votre adresse préremplie.">
+                M'envoyer le nom par Courriel
+            </a>
+        `;
+    } else {
+        // 4. Message d'erreur si le code est invalide
+        resultatDiv.innerHTML = `<p style="color: red;">Désolé, ce code n'est pas valide. Veuillez réessayer.</p>`;
+    }
 }
+
+/**
+ * Fonction pour générer des idées cadeaux en utilisant l'API Gemini.
+ */
+async function genererIdeeCadeau() {
+    if (!receveurActuel) {
+        // Remplacer l'alerte par un message dans la console ou un message non intrusif si possible.
+        // Comme c'est une fonction appelée uniquement après un clic, c'est peu probable, mais on garde la console.
+        console.warn("Veuillez d'abord révéler le receveur.");
+        return;
+    }
+
+    const ideeCadeauDiv = document.getElementById('ideeCadeauResultat');
+    ideeCadeauDiv.innerHTML = `<div class="loading"></div> Réflexion en cours pour ${receveurActuel}...`;
+
+    const systemPrompt = "You are a creative and festive Secret Santa gift expert. Your goal is to suggest 3 thoughtful, fun, and appropriate gift ideas (under 50 EUR/USD) for a specific person in a family/friends exchange. Respond only with the 3 numbered gift ideas and a brief, encouraging introduction. The response must be in French. Do not include price estimates or dollar signs. Use line breaks for readability.";
+    const userQuery = `Suggest 3 creative and thoughtful Secret Santa gift ideas for the recipient named ${receveurActuel}.`;
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: {
+            parts: [{ text: systemPrompt }]
+        },
+    };
+
+    try {
+        const response = await fetchWithExponentialBackoff(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Désolé, je n'ai pas pu générer d'idées pour le moment. Réessayez.";
+
+        // Remplacer les sauts de ligne par des balises <br> pour un affichage HTML
+        const htmlContent = generatedText.replace(/\n/g, '<br>');
+
+        ideeCadeauDiv.innerHTML = `
+            <p style="font-weight: bold; color: #e67e22;">✨ Idées Cadeaux pour ${receveurActuel} :</p>
+            <p>${htmlContent}</p>
+        `;
+    } catch (error) {
+        console.error("Erreur lors de l'appel à l'API Gemini:", error);
+        ideeCadeauDiv.innerHTML = `<p style="color: red;">Erreur lors de la génération des idées. Vérifiez la console pour les détails.</p>`;
+    }
 }
 // Fin du JavaScript
 </script>
